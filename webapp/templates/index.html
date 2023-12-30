@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basic CSV Transform Flask App Example</title>
+</head>
+
+<body>
+  <h1>Basic CSV Transform Flask App Example</h1>
+  <div>
+    <h2>Description</h2>
+    <ul>
+      <li>This webapp is a basic example flask app through which a user can upload an csv for transformation, and then
+        download a zip file with the input and transformed output csv.</li>
+      <li>In this case, the csv transform is a simple row-wise sum. However, the logic can easily be developed to handle
+        more complex data transformation/calculation tasks.</li>
+      <li>The backend checks assumptions - like the expected file extension, columns, and data types - and displays
+        helpful error messages when not met.</li>
+    </ul>
+  </div>
+  <div>
+    <h2>Instructions</h2>
+    <ul>
+      <li>Upload an input csv file with two columns: "x" and "y" </li>
+      <li>Returns a downloadable zip file containing input csv & output csv, with added "sum" column </li>
+    </ul>
+    <p><a href="{{ url_for('download_file', filename='example_input_file.csv') }}" download>Download Example Input
+        File</a></p>
+    <p><a href="{{ url_for('download_file', filename='empty_template_input_file.csv') }}" download>Download Empty
+        Template Input File</a></p>
+  </div>
+  <div>
+    <h2>Upload CSV File</h2>
+    <form method=post enctype=multipart/form-data>
+      <label for="submitter">Submitter:</label><br>
+      <input type="text" id="submitter" name="submitter" required><br>
+      <input type=file name=file required>
+      <input type=submit value=Upload>
+    </form>
+  </div>
+  {% if tables %}
+  <h2>Results</h2>
+  {% for table in tables %}
+  {{ table|safe }}
+  {% endfor %}
+  {% endif %}
+
+  {% if file_created %}
+  <h2>File Created Successfully!</h2>
+  <p>File Path: {{ file_path }}</p>
+  <p><a href="{{ url_for('download_file', filename=result_file_name) }}" download>Download Results</a></p>
+
+  {% endif %}
+</body>
+
+</html>
