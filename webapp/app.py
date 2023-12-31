@@ -1,3 +1,4 @@
+import json
 import os
 import zipfile
 from datetime import datetime
@@ -5,12 +6,26 @@ from io import BytesIO
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-from flask import Flask, render_template, request, send_from_directory
+from dotenv import load_dotenv
+from flask import (
+    Flask,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+    session,
+    url_for,
+)
 
 import load_database  # custum module to load MySQL database
 import primer_designer  # custom csv_transform module
 
 app = Flask(__name__)
+
+# Load environment variables from .env file
+load_dotenv()
+# Set the secret key from the environment variable
+app.secret_key = os.environ.get("FLASK_SECRET_KEY", "default_secret_key")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -125,16 +140,37 @@ def home():
                 ]
             ]
 
-            # render index.html file, sending all relevant outputs and variables
-            return render_template(
-                "index.html",
-                tables=[primer_results_for_display.to_html(classes="data")],
-                file_created=True,
-                file_path=zip_file_path,
-                result_file_name=zip_file_name,
-            )
+            # Store variables for 'success' route in session
+            session["primer_results_for_display"] = primer_results_for_display.to_json()
+            session["file_created"] = True
+            session["file_path"] = zip_file_path
+            session["result_file_name"] = zip_file_name
+
+            # redirect to success route to display results, and avoid resubmitting post request on refresh
+            return redirect(url_for("success"))
 
     return render_template("index.html")
+
+
+@app.route("/success")
+def success():
+
+    # Retrieve variables from session
+    primer_results_for_display = pd.DataFrame(
+        json.loads(session["primer_results_for_display"])
+    )
+    file_created = session["file_created"]
+    file_path = session["file_path"]
+    result_file_name = session["result_file_name"]
+
+    # render index.html file, sending all relevant outputs and variables
+    return render_template(
+        "success.html",
+        tables=[primer_results_for_display.to_html(classes="data")],
+        file_created=file_created,
+        file_path=file_path,
+        result_file_name=result_file_name,
+    )
 
 
 @app.route("/download/<filename>")
