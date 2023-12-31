@@ -88,7 +88,6 @@ def load_database(submitter, submission_name, input_df, output_df):
             merged_amplicons_output_df["option_group_rank"].astype(float).values,
         )
     )
-    print(outputs_vals, flush=True)
     outputs_sql = """
     INSERT INTO primers_all_options (
         submission_id, 

@@ -340,4 +340,4 @@ def process_csv(file_object_in):
     all_options_ranked_df, optimal_primer_results_df = generate_primers(input_df)
 
     # return input_valid as True if assumptions met, input_df, and output_df
-    return True, input_df, all_options_ranked_df
+    return True, input_df, all_options_ranked_df, optimal_primer_results_df
