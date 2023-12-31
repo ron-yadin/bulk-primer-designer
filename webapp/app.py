@@ -4,18 +4,11 @@ from datetime import datetime
 from io import BytesIO
 from zoneinfo import ZoneInfo
 
-import mysql.connector
 import pandas as pd
-from dotenv import load_dotenv
 from flask import Flask, render_template, request, send_from_directory
 
-import csv_transform  # custom csv_transform module
-
-# load mysql db secrets from .env
-load_dotenv()
-MYSQL_USER = os.getenv("MYSQL_USER")
-MYSQL_PASSWORD = os.getenv("MYSQL_PASSWORD")
-MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
+import load_database  # custum module to load MySQL database
+import primer_designer  # custom csv_transform module
 
 app = Flask(__name__)
 
@@ -38,18 +31,6 @@ def home():
         - Rendered HTML template with processed input and output DataFrames if successful,
           along with details stored in a MySQL database.
     """
-
-    # check that .env file has been configured correctly
-    try:
-        for env_var in [MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE]:
-            assert env_var != None
-            assert env_var != ""
-            assert type(env_var) == str
-    except:
-        error_message_str = f"""Error in .env file configuration!
-        Environtment variables MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE must be set
-        as valid values in .env file in project directory."""
-        return render_template("error.html", message=error_message_str)
 
     # run this block upon "POST" request from CSV upload
     if request.method == "POST":
@@ -78,56 +59,24 @@ def home():
             zip_file_path = f"/app/data/{zip_file_name}"
 
             # process csv file object, return both input and output dfs
-            input_valid, input_df, output_df = csv_transform.process_csv(file)
+            input_valid, input_df, output_df = primer_designer.process_csv(file)
 
             # handle cases of invalid input, direct user to the error message page
             if input_valid == False:
                 # in this case, error_message_str stored in input_df variable
                 return render_template("error.html", message=input_df)
 
-            # connect to MySQL database
-            mydb = mysql.connector.connect(
-                host="mysql",
-                user=MYSQL_USER,
-                password=MYSQL_PASSWORD,
-                database=MYSQL_DATABASE,
+            # load the MySQL database
+            database_load_valid, databse_load_message = load_database.load_database(
+                submitter=submitter,
+                submission_name=filename_no_ext,
+                input_df=input_df,
+                output_df=output_df,
             )
-            mycursor = mydb.cursor()
 
-            # add record to submission table
-            sql = "INSERT INTO submissions (submitter, submission_name) VALUES (%s, %s)"
-            val = (submitter, filename_no_ext)
-            mycursor.execute(sql, val)
-            mydb.commit()
-
-            # add records to inputs table
-            submission_id = mycursor.lastrowid
-            inputs_vals = []
-
-            for index, row in input_df.iterrows():
-                inputs_vals.append((submission_id, row["x"], row["y"]))
-
-            inputs_sql = "INSERT INTO inputs (submission_id, x, y) VALUES (%s, %s, %s)"
-            mycursor.executemany(inputs_sql, inputs_vals)
-            mydb.commit()
-
-            # add records to outputs table
-            mycursor.execute(
-                f"SELECT * FROM inputs WHERE submission_id = {submission_id}"
-            )
-            inputs_rows = mycursor.fetchall()
-            inputs_rows_df = pd.DataFrame(
-                inputs_rows, columns=["input_id", "submission_id", "x", "y"]
-            )
-            outputs_vals = list(
-                zip(
-                    inputs_rows_df["input_id"].astype(float).values,
-                    output_df["sum"].astype(float).values,
-                )
-            )
-            outputs_sql = "INSERT INTO outputs (input_id, sum) VALUES (%s, %s)"
-            mycursor.executemany(outputs_sql, outputs_vals)
-            mydb.commit()
+            # handle cases of invalid dabatase load, direct user to the error message page
+            if database_load_valid == False:
+                return render_template("error.html", message=databse_load_message)
 
             # create BytesIO object to store the zip file in memory
             zip_buffer = BytesIO()

@@ -4,27 +4,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Basic CSV Transform Flask App Example</title>
+  <title>Bulk Primer Designer Flask App</title>
 </head>
 
 <body>
-  <h1>Basic CSV Transform Flask App Example</h1>
+  <h1>Bulk Primer Designer Flask App</h1>
   <div>
     <h2>Description</h2>
     <ul>
-      <li>This webapp is a basic example flask app through which a user can upload an csv for transformation, and then
-        download a zip file with the input and transformed output csv.</li>
-      <li>In this case, the csv transform is a simple row-wise sum. However, the logic can easily be developed to handle
-        more complex data transformation/calculation tasks.</li>
-      <li>The backend checks assumptions - like the expected file extension, columns, and data types - and displays
+      <li>This is a flask webapp through which a user can upload a csv of amplicon sequences, and then
+        download a zip file containing both their input csv and output csv with optimal primer selections.</li>
+      <li>All submission events, inputs, and primer options + scores are stored in a MySQL database available at
+        localhost:8080</li>
+      <li>The backend checks assumptions - like the expected file extension & columns, and displays
         helpful error messages when not met.</li>
     </ul>
   </div>
   <div>
     <h2>Instructions</h2>
     <ul>
-      <li>Upload an input csv file with two columns: "x" and "y" </li>
-      <li>Returns a downloadable zip file containing input csv & output csv, with added "sum" column </li>
+      <li>Upload an input csv file with two columns: "amplicon name" and "sequence" </li>
+      <li>Returns a downloadable zip file containing input csv & output csv, with primer options + scores and metadata
+      </li>
     </ul>
     <p><a href="{{ url_for('download_file', filename='example_input_file.csv') }}" download>Download Example Input
         File</a></p>
