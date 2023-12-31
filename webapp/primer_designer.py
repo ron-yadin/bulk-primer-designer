@@ -128,7 +128,11 @@ def generate_primers(
 
     # clean up sequences - remove spaces & new line characters, make uppercase
     input_df["sequence"] = (
-        input_df["sequence"].str.strip().str.replace("\n", "").str.upper()
+        input_df["sequence"]
+        .str.strip()
+        .str.replace("\n", "")
+        .str.replace("\r", "")
+        .str.upper()
     )
 
     # Create dataframe to hold all primer options

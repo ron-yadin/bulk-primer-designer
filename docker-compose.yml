@@ -19,7 +19,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - ./data/mysql_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/combined_init.sql
 
   phpmyadmin:
@@ -29,6 +29,3 @@ services:
       PMA_PORT: 3306
     ports:
       - "8080:80"
-
-volumes:
-  mysql_data:
