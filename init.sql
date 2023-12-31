@@ -37,6 +37,12 @@ CREATE TABLE IF NOT EXISTS primers_all_options (
     FOREIGN KEY (amplicon_id) REFERENCES amplicons(amplicon_id)
 );
 
+CREATE VIEW optimal_primers AS (
+SELECT *
+FROM primers_all_options
+WHERE option_group_rank = 1
+);
+
 INSERT INTO submissions (submitter, submission_name) VALUES
     ('John Smith', 'example submission');
 
