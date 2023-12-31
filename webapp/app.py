@@ -59,7 +59,12 @@ def home():
             zip_file_path = f"/app/data/{zip_file_name}"
 
             # process csv file object, return both input and output dfs
-            input_valid, input_df, output_df = primer_designer.process_csv(file)
+            (
+                input_valid,
+                input_df,
+                all_options_ranked_df,
+                optimal_primer_results_df,
+            ) = primer_designer.process_csv(file)
 
             # handle cases of invalid input, direct user to the error message page
             if input_valid == False:
@@ -71,7 +76,7 @@ def home():
                 submitter=submitter,
                 submission_name=filename_no_ext,
                 input_df=input_df,
-                output_df=output_df,
+                output_df=all_options_ranked_df,
             )
 
             # handle cases of invalid dabatase load, direct user to the error message page
@@ -90,10 +95,15 @@ def home():
                     f"{formatted_time}_{filename_no_ext}_input.csv",
                     input_df.to_csv(index=False),
                 )
-                # write output CSV to the zip file
+                # write all_options_ranked_df CSV to the zip file
                 zip_file.writestr(
-                    f"{formatted_time}_{filename_no_ext}_output.csv",
-                    output_df.to_csv(index=False),
+                    f"{formatted_time}_{filename_no_ext}_all_options_ranked.csv",
+                    all_options_ranked_df.to_csv(index=False),
+                )
+                # write optimal_primer_results_df CSV to the zip file
+                zip_file.writestr(
+                    f"{formatted_time}_{filename_no_ext}_optimal_primer_results.csv",
+                    optimal_primer_results_df.to_csv(index=False),
                 )
 
             # move buffer position to the beginning to prepare for reading
@@ -101,10 +111,24 @@ def home():
             # write the zip file to the Docker volume
             with open(zip_file_path, "wb") as zip_file:
                 zip_file.write(zip_buffer.read())
+
+            # subset columns to simplify table returned to html webapp
+            primer_results_for_display = optimal_primer_results_df[
+                [
+                    "primer_name",
+                    "direction",
+                    "primer_sequence",
+                    "length",
+                    "melt_temperature",
+                    "gc_percentage",
+                    "gc_clamp",
+                ]
+            ]
+
             # render index.html file, sending all relevant outputs and variables
             return render_template(
                 "index.html",
-                tables=[output_df.to_html(classes="data")],
+                tables=[primer_results_for_display.to_html(classes="data")],
                 file_created=True,
                 file_path=zip_file_path,
                 result_file_name=zip_file_name,
