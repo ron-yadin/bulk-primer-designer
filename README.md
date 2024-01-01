@@ -5,6 +5,8 @@
 - There is a user interface webpage where a user can upload an input csv file, then view & download the results output csvs. Additionally, the inputs, submission events, scored primer options, and optimal primers subset are tracked in a MySQL relational database. This database can be accessed through a second database admin webpage, where the database can be managed and queried with SQL. 
   
 - This app accepts a two-column input csv (with header columns "amplicon name" & "sequence"), and returns a zip file containing the input file, the scored list of all primer options considered, and the subsetted list of top-ranked optimal primers for each amplicon.
+    - The MySQL data model contains 3 tables (submissions, amplicons, and primers_all_options), and 1 view (optimal_primers)
+    - See ```init.sql``` file for more details
 
 ### Skills Highlighted
 - Tech stack: docker-compose & Dockerfile, Flask (python, pandas, Biopython, HTML, jinja, session), MySQL (database development with DDL, loading with mysql-connector, and querying with SQL)
