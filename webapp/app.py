@@ -35,16 +35,19 @@ def home():
 
     Supports both GET and POST requests. For GET requests, renders the home page.
     For POST requests, processes the uploaded CSV file, creates a zip file containing
-    input and output CSVs,  adds submission details to a MySQL database, and renders
-    the home page with relevant information.
+    input and output CSVs, adds submission details to a MySQL database, and renders
+    the success or error page with relevant results or error message information.
 
     Returns:
     - GET request: Rendered HTML template for the home page.
     - POST request:
-        - Rendered HTML template with error message if file extension is not .csv or
+        - Rendered HTML template with an error message if the file extension is not .csv or
           if the CSV processing encounters an error.
-        - Rendered HTML template with processed input and output DataFrames if successful,
-          along with details stored in a MySQL database.
+        - Renders the "success.html" template with processed input and output DataFrames if successful,
+          and stores details in a MySQL database.
+
+    Note:
+    - Uses Flask session to store variables for the "success" route to avoid resubmitting the POST request on refresh.
     """
 
     # run this block upon "POST" request from CSV upload
@@ -140,7 +143,7 @@ def home():
                 ]
             ]
 
-            # Store variables for 'success' route in session
+            # store variables for 'success' route in session
             session["primer_results_for_display"] = primer_results_for_display.to_json()
             session["file_created"] = True
             session["file_path"] = zip_file_path
@@ -154,8 +157,22 @@ def home():
 
 @app.route("/success")
 def success():
+    """
+    Flask route handler for the success page.
 
-    # Retrieve variables from session
+    Renders the "success.html" template, displaying the results of the primer design process
+    and information stored in the Flask session from the previous "home" route.
+
+    Returns:
+    - Rendered HTML template:
+        - Displays tables with primer design results.
+        - Indicates whether the file was successfully created.
+        - Provides a link to download the results zip file.
+
+    Note:
+    - Retrieves stored variables from the Flask session to display relevant information.
+    """
+    # retrieve variables from session
     primer_results_for_display = pd.DataFrame(
         json.loads(session["primer_results_for_display"])
     )

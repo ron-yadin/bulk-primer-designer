@@ -12,6 +12,29 @@ MYSQL_DATABASE = os.getenv("MYSQL_DATABASE")
 
 
 def load_database(submitter, submission_name, input_df, output_df):
+    """
+    Loads submission details, amplicon information, and primer options into a MySQL database.
+
+    Parameters:
+    - submitter (str): The name of the user submitting the job.
+    - submission_name (str): The name associated with the submission (submission filename).
+    - input_df (DataFrame): DataFrame containing input amplicon information.
+    - output_df (DataFrame): DataFrame containing primer options and scores.
+
+    Returns:
+    - Tuple: (bool, str)
+        - If the database load is successful, returns (True, "Database load successful").
+        - If there is an error in the .env file configuration or during database operations,
+          returns (False, error_message_str).
+
+    Notes:
+    - The function checks the .env file for correct configuration of MySQL user, password, and database name.
+    - Connects to a MySQL database using provided credentials.
+    - Inserts submission details into the 'submissions' table.
+    - Inserts amplicon information into the 'amplicons' table.
+    - Merges input and output DataFrames to obtain amplicon ID and inserts primer options into the 'primers_all_options' table.
+    - The database connection is automatically committed at the end of each transaction.
+    """
 
     # check that .env file has been configured correctly
     try:
