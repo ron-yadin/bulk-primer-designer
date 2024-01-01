@@ -92,8 +92,20 @@ energies.set_index("Pair", inplace=True)
 
 def tm_calc(seq):
     """
-    Calculates the Modified Breslauer melting temperature for non-symetric
-    oligonucleotides >8 bp, that contain at least one G or C
+    Calculates the Modified Breslauer melting temperature for non-symmetric
+    oligonucleotides >8 bp, that contain at least one G or C.
+
+    Parameters:
+    - seq (str): The input DNA sequence.
+
+    Returns:
+    - float: The calculated melting temperature.
+
+    Notes:
+    - The function utilizes thermodynamic quantities from the nearest-neighbor model.
+    - Implements the algorithm described in the paper:
+      https://www.ncbi.nlm.nih.gov/pmc/articles/PMC323600/pdf/pnas00315-0187.pdf
+    - Reference link for the equation: http://biotools.nubic.northwestern.edu/OligoCalc2.01.html
     """
     h_tot = 0
     s_tot = 0
@@ -121,7 +133,18 @@ def generate_primers(
     input_df, add_overhangs=False, upstream_overhang=None, downstream_overhang=None
 ):
     """
-    Takes in a dataframe of gene sequences and returns the 'best' ranked fwd and rev primer to amplify each gene from all possible primers between 19-26 bp
+    Takes in a dataframe of gene sequences and returns the 'best' ranked fwd and rev primer to amplify each gene from all possible primers between 19-26 bp.
+
+    Parameters:
+    - input_df (DataFrame): DataFrame containing gene sequences and information.
+    - add_overhangs (bool): If True, adds overhang sequences to the primers.
+    - upstream_overhang (str): The sequence to be added to the forward primers, upstream of the amplicon.
+    - downstream_overhang (str): The sequence to be added to the reverse primers, downstream of amplicon.
+
+    Returns:
+    - Tuple: (all_options_ranked_df, optimal_primer_results_df)
+        - all_options_ranked_df (DataFrame): DataFrame containing all scored & ranked primer options.
+        - optimal_primer_results_df (DataFrame): DataFrame containing the subset of optimal primers from each option group.
     """
     # convert column headers to lowercase to avoid case sensitivity errors
     input_df.columns = map(str.lower, input_df.columns)
@@ -311,7 +334,20 @@ def generate_primers(
 
 def process_csv(file_object_in):
     """
-    TODO: add docstring
+    Processes a CSV file containing gene sequences and generates optimal primer options.
+
+    Parameters:
+    - file_object_in (file): The input CSV file.
+
+    Returns:
+    - Tuple: (input_valid, input_df, all_options_ranked_df, optimal_primer_results_df)
+        - input_valid (bool): Indicates if the input CSV is valid.
+        - input_df (DataFrame): DataFrame containing input gene sequences.
+        - all_options_ranked_df (DataFrame): DataFrame containing all ranked primer options.
+        - optimal_primer_results_df (DataFrame): DataFrame containing the optimal primer options.
+
+    Notes:
+    - Contains try/except blocks to run input validity checks
     """
     content = file_object_in.read().decode("utf-8")
     input_df = pd.read_csv(StringIO(content))
@@ -330,15 +366,6 @@ def process_csv(file_object_in):
         return False, error_message_str, None
 
     # TODO: add more input validation checks
-    # try:
-    #     input_dtypes = list(set(list(input_df.dtypes.values)))
-    #     for dtype in input_dtypes:
-    #         assert dtype == "int64" or dtype == "float64"
-    # except:
-    #     error_message_str = f"Exptected numeric values, but non-numeric value detected"
-    #     # If assumption not met, return input_valid as False,
-    #     # error message in place of input_df, and output_df as None
-    #     return False, error_message_str, None
 
     # run primer generation function to generate output dfs from input
     all_options_ranked_df, optimal_primer_results_df = generate_primers(input_df)
