@@ -1,17 +1,20 @@
 # Primer Designer for PCR DNA Amplification with MySQL Database
+## Problem Statement
+- In the field of metabolic engineering for industrial synthetic biology, optimizing biosynthetic pathways often involves testing various versions of specific pathway enzymes. This requires curating a list of genes, designing oligonucleotide primers, and obtaining their genetic sequences through PCR amplification or synthesis. The primer design process is time-consuming and repetitive, involving property calculations and adherence to constraints. This tool automates primer design using multi-criteria decision analysis (MCDA), streamlining molecular cloning and genomic engineering.
 ## Overview
-- A containerized, full-stack webapp that designs oligonucleotide primers for PCR amplification of a list input of amplicons.  
+- A containerized, full-stack webapp that designs oligonucleotide primers for PCR amplification of a list input of amplicon sequencews.
+    - Docker is the sole installation required, eliminating the need for complex local configurations.
 
 - There is a user interface webpage where a user can upload an input csv file, then view & download the results output csvs. Additionally, the inputs, submission events, scored primer options, and optimal primers subset are tracked in a MySQL relational database. This database can be accessed through a second database admin webpage, where the database can be managed and queried with SQL. 
   
-- This app accepts a two-column input csv (with header columns "amplicon name" & "sequence"), and returns a zip file containing the input file, the scored list of all primer options considered, and the subsetted list of top-ranked optimal primers for each amplicon.
+    - The app requires a two-column CSV file with headers 'amplicon name' and 'sequence' as input, and returns a zip file containing the input file, the scored list of all primer options considered, and the subsetted list of top-ranked optimal primers for each amplicon.
     - The MySQL data model contains 3 tables (submissions, amplicons, and primers_all_options), and 1 view (optimal_primers)
-    - See ```init.sql``` file for more details
+        - See ```init.sql``` file for more details
 
 ### Skills Highlighted
-- Tech stack: docker-compose & Dockerfile, Flask (python, pandas, Biopython, HTML, jinja, session), MySQL (database development with DDL, loading with mysql-connector, and querying with SQL)
-- Molecular biology: Translating complex biological formula ([Modified Breslauer Melting Temperature](http://biotools.nubic.northwestern.edu/OligoCalc2.01.html)) into code, forward & reverse primer generation through multi-criteria decision analysis (MCDA) considering Tm, GC%, and presence or absence of a GC clamp
-- Best practices: containerization & dependency management, secrets management (.env file), input validation (try/except), error handling (error.html with helpful error messages), comments & documentation (docstrings, inline comments, detailed README.md)
+- <b>Tech stack</b>: Docker (docker-compose & Dockerfile), Flask (python, pandas, Biopython, HTML, jinja, session), MySQL (database configuration with DDL, data loading with python mysql-connector, and querying with SQL)
+- <b>Molecular biology</b>: Encoding a complex biological formula ([Modified Breslauer Melting Temperature](http://biotools.nubic.northwestern.edu/OligoCalc2.01.html)), forward & reverse primer generation through multi-criteria decision analysis (MCDA) considering Tm, GC%, and presence or absence of a GC clamp
+- <b>Best practices</b>: containerization & dependency management, secrets management (.env file), input validation (try/except), error handling (error.html with helpful error messages), comments & documentation (docstrings, inline comments, detailed README.md)
 ___
 ## Project File Structure
 ```
@@ -48,7 +51,7 @@ ___
 ## Requirements
 1. Supported architectures: ```amd64```,  ```arm64v8```
 1. Ensure Docker is installed - follow [the install instructions found here](https://docs.docker.com/desktop/) to install it
-    - Docker Desktop recommended for MacOS & Windows. Docker Enginge and Docker Compose installed on 64-bit linux should also work (but as of yet, not tested). 
+    - Docker Desktop recommended for MacOS & Windows. Docker Enginge and Docker Compose installed on 64-bit linux should also work (but not yet tested). 
 ## Installation
 1. Clone or download this repo to copy the required files & file structure locally
     - Open a terminal window and run: ```git clone --depth 1 https://github.com/ron-yadin/bulk-primer-designer.git```
@@ -58,11 +61,17 @@ ___
     - this is a security best practice to avoid publication of sensitive login information - the ```.env``` is in the ```.gitignore``` file, and will not be included in version control
 ## Usage
 1. Ensure Docker daemon is running locally (by starting Docker Desktop, for example)
+    - Can verify by running ```docker run hello-world``` in a terminal window and confirming "Hello from Docker!" message displayed.
 1. Open a terminal window
 1. Navigate to the project folder ```cd local/path/to/bulk-primer-designer```    
-    - update the path to match project folder location in local file system 
+    - Update the path to match project folder location in local file system 
 1. Run the command: ```docker-compose up --build```
-    - optionally, add the ```-d``` flag to run in "detached mode" (in the background)
+    - Optionally, add the ```-d``` flag to run in "detached mode" (in the background)
+    - The app takes ~20-40 seconds to initialize, perhpas longer upon the first use.
+        - Typically the final initialization log line looks like this, indicating the webapp is ready for use:  
+        ```
+        bulk-primer-designer-mysql-1 | 2023-12-31T20:22:02.531310Z 0 [System] [MY-010931] [Server] /usr/sbin/mysqld: ready for connections. Version: '8.2.0'  socket: '/var/run/mysqld/mysqld.sock'  port: 3306  MySQL Community Server - GPL.
+        ```
 1. Open a web browser and visit ```localhost:5001``` for the webapp user interface
     - There will be a description, instructions, links to download an example input file & empty input file template, and a form to submit an input csv and submitter name. 
 ![flask webapp home screenshot](./readme_resources/primer-designer-webapp-home.png)
@@ -70,8 +79,8 @@ ___
 ![flask webapp results screenshot](./readme_resources/primer-designer-webapp-results.png)
 1. Open a web browser and visit ```localhost:8080``` for the MySQL database administration interface
     - use the user name (```MYSQL_USER```) & password (```MYSQL_PASSWORD```) configured in the ```.env``` file to sign into the MySQL admin dashboard
-![phpmyadmin login screenshot](./readme_resources/primer-designer-phpmyadmin-login.png)
-![phpmyadmin home screenshot](./readme_resources/primer-designer-phpmyadmin-home.png)
+![phpmyadmin login screenshot](./readme_resources/primer-designer-phpMyAdmin-login.png)
+![phpmyadmin home screenshot](./readme_resources/primer-designer-phpMyAdmin-home.png)
     - To inspect & query tables, click the database name (```MYSQL_DATABASE```) in the left panel. Tables will be shown and "SQL" option in the top navigation bar will open a box to enter queries
         - example SQL queries to run: 
         ```
