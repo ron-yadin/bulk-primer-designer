@@ -1,25 +1,26 @@
 # Primer Designer for PCR DNA Amplification with MySQL Database
 ## Problem Statement
-- In metabolic engineering for industrial synthetic biology, optimizing biosynthetic pathways often involves testing various versions of specific pathway enzymes. This requires curating a list of genes, designing oligonucleotide primers, and obtaining workable amounts of their genetic sequences through PCR amplification. The primer design process can be time-consuming and repetitive, involving calculations of biochemical properties and adherence to multiple constraints. This tool automates primer design using multi-criteria decision analysis (MCDA), streamlining molecular cloning and genomic engineering.
+- In metabolic engineering, optimizing biosynthetic pathways often involves testing various isozymes for specific pathway reactions. This requires curating a list of genes, designing oligonucleotide primers, and generating sufficient material for molecular cloning & strain engineering through PCR amplification. 
+- The primer design process can be time-consuming and repetitive, ultimately boiling down to an algorithm involving calculation of biochemical properties and consideration of multiple constraints. This tool uses multi-criteria decision analysis (MCDA) to automate primer design, saving time and reducing manual design effort required for molecular cloning.
 ## Overview
 - A containerized, full-stack webapp that designs oligonucleotide primers for PCR amplification of a list input of amplicon sequences.
     - For streamlined deployment, simply install Docker, download the source code, modify one local file for login credentials, and run the app with a single terminal command.
 
-- The app features two web interfaces: one for uploading CSVs, viewing/download results, and triggering MySQL database tracking. The second interface serves as a database admin webpage for database management and SQL queries. 
+- The app features two web interfaces: one for uploading CSVs, viewing/download results, and triggering MySQL database tracking. The second interface serves as a database admin webpage for database management and running SQL queries. 
   
     - The app requires a two-column CSV file with headers 'amplicon name' and 'sequence' as input, and returns a zip file containing the input file, the scored list of all primer options considered, and the subsetted list of top-ranked optimal primers for each amplicon.
-    - The MySQL data model contains 3 tables (submissions, amplicons, and primers_all_options), and 1 view (optimal_primers)
+    - The MySQL data model contains 3 tables (submissions, amplicons, and primers_all_options), and 1 filtered view (optimal_primers)
         - See ```init.sql``` file for more details
 
 ### Skills Highlighted
 - <b>Tech stack</b>: Docker (docker-compose & Dockerfile), Flask (python, pandas, Biopython, HTML, jinja, session), MySQL (database configuration with DDL, data loading with python mysql-connector, and querying with SQL)
-- <b>Molecular biology</b>: Encoding a complex biological formula ([Modified Breslauer Melting Temperature](http://biotools.nubic.northwestern.edu/OligoCalc2.01.html)), forward & reverse primer generation through multi-criteria decision analysis (MCDA) considering Tm, GC%, and presence or absence of a GC clamp
-- <b>Best practices</b>: containerization & dependency management, secrets management (.env file), input validation (try/except), error handling (error.html with helpful error messages), comments & documentation (docstrings, inline comments, detailed README.md)
+- <b>Molecular biology</b>: Encoding a complex biological formula ([Modified Breslauer Melting Temperature](http://biotools.nubic.northwestern.edu/OligoCalc2.01.html)) into python, forward & reverse primer generation through multi-criteria decision analysis (MCDA) considering Tm, GC%, and presence or absence of a GC clamp
+- <b>Best practices</b>: containerization & dependency management (docker-compse, Dockerfile, requirements.txt), secrets management (.env file), input validation (try/except), error handling (error.html with helpful error messages), comments & documentation (docstrings, inline comments, detailed README.md)
 ___
 ## Project File Structure
 ```
 /csv-xform-flask-mysql-app
-|-- /data (for example files & output zip files)
+|-- /data (for example filew, output zip files, and db files)
 |   |-- (/mysql_data) - not in repo, but automatically generated upon initialization
 |   |-- empty_template_input_file.csv
 |   |-- example_input_file.csv
@@ -45,8 +46,8 @@ ___
 ___
 ## Requirements
 1. Supported architectures: ```amd64```,  ```arm64v8```
-1. Ensure Docker is installed - follow [the install instructions found here](https://docs.docker.com/desktop/) to install it
-    - Docker Desktop recommended for MacOS & Windows. Docker Enginge and Docker Compose installed on 64-bit linux should also work (but not yet tested). 
+1. Ensure Docker is installed - follow OS-specific links to docker install documentation
+    - ```Docker Desktop``` recommended for [MacOS](https://docs.docker.com/desktop/install/mac-install/) & [Windows](https://docs.docker.com/desktop/install/windows-install/). 64-bit [Linux](https://docs.docker.com/desktop/install/linux-install/) should also work (but not yet tested). 
 ## Installation
 1. Clone or download this repo to copy the required files & file structure locally
     - Open a terminal window and run: ```git clone --depth 1 https://github.com/ron-yadin/bulk-primer-designer.git```
