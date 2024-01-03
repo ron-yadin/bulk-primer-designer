@@ -27,6 +27,7 @@ ___
 |   |-- primer-designer-nominal-docker-ps.png
 |   |-- primer-designer-phpMyAdmin-database.png
 |   |-- primer-designer-phpMyAdmin-home.png
+|   |-- primer-designer-phpMyAdmin-login.png
 |   |-- primer-designer-phpMyAdmin-query.png
 |   |-- primer-designer-webapp-home.png
 |   |-- primer-designer-webapp-results.png
@@ -111,8 +112,16 @@ ___
 1. All timestamps are localized to California time.
 1. Input amplicon sequences are cleaned up after import - so "sequence" values are not case sensitive, and newline characters ("\n"), return characters ("\r"), and spaces will be removed (i.e. copy+paste from fasta file is OK)
 ## Troubleshooting
-1. If deployment attempted on non-supported system architecture, might see an error like: ```no matching manifest for <non-supported/system/architecture> in the manifest list entries```
-1. If issues arise in connecting to or executing actions with either user webapp or MySQL admin webapp, examine the container status & docker logs
+1. This error may appear if <b>Requirements</b> step  #1 was overlooked, and installation is attempted on an unsupported architecture
+ ```
+ no matching manifest for <non-supported/system/architecture> in the manifest list entries
+ ```
+
+2. This error may appear if <b>Installation</b> step  #2 was skipped or carried out incorrectly - ensure the ```env.txt``` file was converted successfully to a ```.env``` file, and is present in the project directory
+```
+Failed to load /Users/<username>/repos/bulk-primer-designer/.env: open /Users/<username>/repos/bulk-primer-designer/.env: no such file or directory
+```
+3. If issues arise in connecting to or executing actions with either user webapp or MySQL admin webapp, examine the container status & docker logs
     - In a terminal window, run ```docker ps```. There should be 3 containers running
 ![nominal docker ps screenshot](./readme_resources/primer-designer-nominal-docker-ps.png)
     - If running in "detached mode", run ```docker logs <container id>``` for each container - examine if any ```exited with error code #```. This would indicate an issue, and provide information for further troubleshooting.
