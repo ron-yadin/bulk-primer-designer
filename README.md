@@ -1,8 +1,8 @@
 # Primer Designer for PCR DNA Amplification with MySQL Database
 ## Problem Statement
-- In the field of metabolic engineering for industrial synthetic biology, optimizing biosynthetic pathways often involves testing various versions of specific pathway enzymes. This requires curating a list of genes, designing oligonucleotide primers, and obtaining their genetic sequences through PCR amplification or synthesis. The primer design process is time-consuming and repetitive, involving property calculations and adherence to constraints. This tool automates primer design using multi-criteria decision analysis (MCDA), streamlining molecular cloning and genomic engineering.
+- In metabolic engineering for industrial synthetic biology, optimizing biosynthetic pathways often involves testing various versions of specific pathway enzymes. This requires curating a list of genes, designing oligonucleotide primers, and obtaining workable amounts of their genetic sequences through PCR amplification. The primer design process can be time-consuming and repetitive, involving calculations of biochemical properties and adherence to multiple constraints. This tool automates primer design using multi-criteria decision analysis (MCDA), streamlining molecular cloning and genomic engineering.
 ## Overview
-- A containerized, full-stack webapp that designs oligonucleotide primers for PCR amplification of a list input of amplicon sequencews.
+- A containerized, full-stack webapp that designs oligonucleotide primers for PCR amplification of a list input of amplicon sequences.
     - Docker is the sole installation required, eliminating the need for complex local configurations.
 
 - There is a user interface webpage where a user can upload an input csv file, then view & download the results output csvs. Additionally, the inputs, submission events, scored primer options, and optimal primers subset are tracked in a MySQL relational database. This database can be accessed through a second database admin webpage, where the database can be managed and queried with SQL. 
