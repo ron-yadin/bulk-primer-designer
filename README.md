@@ -20,7 +20,7 @@ ___
 ## Project File Structure
 ```
 /csv-xform-flask-mysql-app
-|-- /data (for example filew, output zip files, and db files)
+|-- /data (for example files, output zip files, and db files)
 |   |-- (/mysql_data) - not in repo, but automatically generated upon initialization
 |   |-- empty_template_input_file.csv
 |   |-- example_input_file.csv
