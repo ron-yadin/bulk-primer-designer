@@ -3,9 +3,9 @@
 - In metabolic engineering for industrial synthetic biology, optimizing biosynthetic pathways often involves testing various versions of specific pathway enzymes. This requires curating a list of genes, designing oligonucleotide primers, and obtaining workable amounts of their genetic sequences through PCR amplification. The primer design process can be time-consuming and repetitive, involving calculations of biochemical properties and adherence to multiple constraints. This tool automates primer design using multi-criteria decision analysis (MCDA), streamlining molecular cloning and genomic engineering.
 ## Overview
 - A containerized, full-stack webapp that designs oligonucleotide primers for PCR amplification of a list input of amplicon sequences.
-    - Docker is the sole installation required, eliminating the need for complex local configurations.
+    - For streamlined deployment, simply install Docker, download the source code, modify one local file for login credentials, and run the app with a single terminal command.
 
-- There is a user interface webpage where a user can upload an input csv file, then view & download the results output csvs. Additionally, the inputs, submission events, scored primer options, and optimal primers subset are tracked in a MySQL relational database. This database can be accessed through a second database admin webpage, where the database can be managed and queried with SQL. 
+- The app features two web interfaces: one for uploading CSVs, viewing/download results, and triggering MySQL database tracking. The second interface serves as a database admin webpage for database management and SQL queries. 
   
     - The app requires a two-column CSV file with headers 'amplicon name' and 'sequence' as input, and returns a zip file containing the input file, the scored list of all primer options considered, and the subsetted list of top-ranked optimal primers for each amplicon.
     - The MySQL data model contains 3 tables (submissions, amplicons, and primers_all_options), and 1 view (optimal_primers)
@@ -19,20 +19,14 @@ ___
 ## Project File Structure
 ```
 /csv-xform-flask-mysql-app
-|-- data (for example files & output zip files)
-|   |-- (mysql_data) - not in repo, but automatically generated upon initialization
+|-- /data (for example files & output zip files)
+|   |-- (/mysql_data) - not in repo, but automatically generated upon initialization
 |   |-- empty_template_input_file.csv
 |   |-- example_input_file.csv
-|-- readme_resources
-|   |-- primer-designer-nominal-docker-ps.png
-|   |-- primer-designer-phpMyAdmin-database.png
-|   |-- primer-designer-phpMyAdmin-home.png
-|   |-- primer-designer-phpMyAdmin-login.png
-|   |-- primer-designer-phpMyAdmin-query.png
-|   |-- primer-designer-webapp-home.png
-|   |-- primer-designer-webapp-results.png
-|-- webapp
-|   |-- templates
+|-- /readme_resources 
+|   |-- various .png files referenced in README
+|-- /webapp
+|   |-- /templates
 |       |-- error.html
 |       |-- index.html
 |       |-- success.html
@@ -43,7 +37,7 @@ ___
 |   |-- requirements.txt
 |-- .gitignore
 |-- docker-compose.yml
-|-- env.txt (MUST BE CHANGED TO .ENV LOCALLY, REPLACE DEFAULT VALUES)
+|-- env.txt (MUST BE CHANGED TO .ENV LOCALLY; REPLACE DEFAULT VALUES)
 |-- init.sql
 |-- LICENSE
 |-- README.md
